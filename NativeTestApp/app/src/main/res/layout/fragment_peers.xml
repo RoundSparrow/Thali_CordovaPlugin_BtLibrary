@@ -9,9 +9,30 @@
                 android:paddingBottom="0dp"
                 tools:mContext=".PeerListFragment">
 
+    <LinearLayout
+        android:id="@+id/peersTopInfoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        >
+        <TextView
+            android:id="@+id/peersTopInfo0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hello peers info0" />
+
+        <TextView
+            android:id="@+id/peersTopInfo1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hello peers info1" />
+    </LinearLayout>
+
     <ListView
             android:id="@+id/listView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/peersTopInfoLayout" />
 
 </RelativeLayout>

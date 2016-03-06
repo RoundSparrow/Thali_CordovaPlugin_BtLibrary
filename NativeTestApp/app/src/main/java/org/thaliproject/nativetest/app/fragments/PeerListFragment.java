@@ -3,7 +3,6 @@
  */
 package org.thaliproject.nativetest.app.fragments;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -108,6 +107,11 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
         super.onCreate(savedInstanceState);
     }
 
+
+    private LinearLayout peersTopInfoLayout;
+    private TextView peersTopInfo0;
+    private TextView peersTopInfo1;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -134,6 +138,11 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
             mOutgoingConnectionIconDataFlowing = ContextCompat.getDrawable(mContext, R.drawable.ic_arrow_upward_green_24dp);
         }
 
+        mainThreadHandler = new Handler(mContext.getMainLooper());
+        peersTopInfoLayout = (LinearLayout) view.findViewById(R.id.peersTopInfoLayout);
+        peersTopInfo0 = (TextView) view.findViewById(R.id.peersTopInfo0);
+        peersTopInfo1 = (TextView) view.findViewById(R.id.peersTopInfo1);
+
         mListAdapter = new ListAdapter(mContext);
 
         mListView = (ListView)view.findViewById(R.id.listView);
@@ -143,6 +152,8 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
         setListener(mListener);
 
         mModel.setListener(this);
+
+        showTopMessagInfo();
 
         return view;
     }
@@ -195,7 +206,6 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
                             wasConsumed = true;
                         }
                     }
-
                     break;
                 case R.id.action_send_data:
                     mListener.onSendDataRequest(mSelectedPeerProperties); // Has a null check
@@ -207,17 +217,34 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
         return wasConsumed || super.onContextItemSelected(item);
     }
 
+
+    Handler mainThreadHandler;
+
     @Override
     public void onDataChanged() {
         Log.i(TAG, "onDataChanged");
-        Handler handler = new Handler(mContext.getMainLooper());
 
-        handler.post(new Runnable() {
+        mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
                 mListAdapter.notifyDataSetChanged();
+
+                showTopMessagInfo();
             }
         });
+    }
+
+    private void showTopMessagInfo()
+    {
+        if (mListAdapter.getCount() < 1)
+        {
+            peersTopInfoLayout.setVisibility(View.VISIBLE);
+            peersTopInfo0.setText("No peers have been discovered, searching in background. The LOG tab should reveal status of serach activity.");
+        }
+        else
+        {
+            peersTopInfoLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override
