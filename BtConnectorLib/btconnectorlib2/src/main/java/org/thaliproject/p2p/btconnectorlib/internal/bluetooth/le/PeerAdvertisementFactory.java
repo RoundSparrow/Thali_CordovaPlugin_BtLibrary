@@ -162,7 +162,7 @@ class PeerAdvertisementFactory {
         if (parsedAdvertisement != null) {
             if (parsedAdvertisement.bluetoothMacAddress != null) {
                 peerProperties = new PeerProperties(parsedAdvertisement.bluetoothMacAddress);
-                peerProperties.setDiscoveryMethod(PeerProperties.DISCOVERY_VIA_BLUETOOTH_LTE);
+                peerProperties.setDiscoveryMethod(PeerProperties.DISCOVERY_VIA_BLUETOOTH_LE);
             } else {
                 Log.e(TAG, "parsedAdvertisementToPeerProperties: No Bluetooth MAC address");
             }

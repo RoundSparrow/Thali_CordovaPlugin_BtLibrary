@@ -283,8 +283,8 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
                 case PeerProperties.DISCOVERY_VIA_BLUETOOTH:
                     textView.setText("via Bluetooth");
                     break;
-                case PeerProperties.DISCOVERY_VIA_BLUETOOTH_LTE:
-                    textView.setText("via Bluetooth LTE");
+                case PeerProperties.DISCOVERY_VIA_BLUETOOTH_LE:
+                    textView.setText("via Bluetooth LE");
                     break;
                 case PeerProperties.DISCOVERY_VIA_UNKNOWN:
                     textView.setText("");
