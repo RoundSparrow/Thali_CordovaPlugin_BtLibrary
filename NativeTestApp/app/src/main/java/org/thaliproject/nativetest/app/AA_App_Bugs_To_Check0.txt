@@ -1,0 +1,27 @@
+
+Bug 0001:
+"The content of the adapter has changed but ListView did not receive a notification. Make sure the content of your adapter is not modified from a background thread, but only from the UI thread. Make sure your adapter calls notifyDataSetChanged() when its content changes."
+
+Bug 0002:
+getRemoteDevice: Failed to get the remote device: 40:88:5:7F:FB:73 is not a valid Bluetooth address
+java.lang.IllegalArgumentException: 40:88:5:7F:FB:73 is not a valid Bluetooth address
+
+Is this hapenning because a WiFi IP Address is being used as a Bluetooth connection target?
+
+Bug 0003:
+
+https://github.com/thaliproject/Thali_CordovaPlugin_BtLibrary/issues/49
+
+thaliproject.p2p.btconnectorlib.internal.bluetooth.BluetoothConnector: connect: Failed to create the connection timeout timer: Can't create handler inside thread that has not called Looper.prepare()
+   java.lang.RuntimeException: Can't create handler inside thread that has not called Looper.prepare()
+	   at android.os.Handler.<init>(Handler.java:200)
+	   at android.os.Handler.<init>(Handler.java:114)
+	   at android.os.CountDownTimer$1.<init>(CountDownTimer.java:109)
+	   at android.os.CountDownTimer.<init>(CountDownTimer.java:109)
+	   at org.thaliproject.p2p.btconnectorlib.internal.bluetooth.BluetoothConnector$9.<init>(BluetoothConnector.java:605)
+	   at org.thaliproject.p2p.btconnectorlib.internal.bluetooth.BluetoothConnector.createConnectionTimeoutTimer(BluetoothConnector.java:604)
+	   at org.thaliproject.p2p.btconnectorlib.internal.bluetooth.BluetoothConnector.connect(BluetoothConnector.java:348)
+	   at org.thaliproject.p2p.btconnectorlib.ConnectionManager.connect(ConnectionManager.java:193)
+	   at org.thaliproject.nativetest.app.ConnectionEngine.connect(ConnectionEngine.java:182)
+	   at org.thaliproject.nativetest.app.ConnectionEngine.autoConnectIfEnabled(ConnectionEngine.java:549)
+	   at org.thaliproject.nativetest.app.ConnectionEngine$2.run(ConnectionEngine.java:500)
