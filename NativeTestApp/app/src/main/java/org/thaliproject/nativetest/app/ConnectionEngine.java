@@ -508,6 +508,7 @@ public class ConnectionEngine implements
                         }
                         catch (Exception e0)
                         {
+                            BridgeSpot.exceptionProblemCount++;
                             Log.e(TAG, "Exception in the reverse direction transfer", e0);
                         }
                     }

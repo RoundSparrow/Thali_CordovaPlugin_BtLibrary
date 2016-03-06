@@ -5,4 +5,5 @@ package org.thaliproject.nativetest.app;
  */
 public class BridgeSpot {
 	public static String statusConnectionEngine = "";
+	public static int exceptionProblemCount = 0;
 }
