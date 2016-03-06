@@ -10,6 +10,12 @@ package org.thaliproject.p2p.btconnectorlib;
 public class PeerProperties {
     public static final String NO_PEER_NAME_STRING = "<no peer name>";
     public static final String BLUETOOTH_MAC_ADDRESS_UNKNOWN = "0:0:0:0:0:0";
+    public static final int DISCOVERY_VIA_UNKNOWN = 0;
+    public static final int DISCOVERY_VIA_WIFI = 1;
+    public static final int DISCOVERY_VIA_BLUETOOTH = 2;
+    public static final int DISCOVERY_VIA_BLUETOOTH_LTE = 3;
+
+    private int discoveryMethodMostRecent = DISCOVERY_VIA_UNKNOWN;
     private String mName; // The peer name
     private String mBluetoothMacAddress;
     private String mServiceType;
@@ -190,6 +196,16 @@ public class PeerProperties {
         }
 
         return dataWasCopied;
+    }
+
+    public int getDiscoveryMethod()
+    {
+        return discoveryMethodMostRecent;
+    }
+
+    public void setDiscoveryMethod(int discoveryMethod)
+    {
+        discoveryMethodMostRecent = discoveryMethod;
     }
 
     @Override

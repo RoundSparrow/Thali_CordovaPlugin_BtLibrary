@@ -274,6 +274,23 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
             textView = (TextView) view.findViewById(R.id.peerId);
             textView.setText(peerProperties.getId());
 
+            textView = (TextView) view.findViewById(R.id.peerDiscoveryMethod);
+            switch (peerProperties.getDiscoveryMethod())
+            {
+                case PeerProperties.DISCOVERY_VIA_WIFI:
+                    textView.setText("via WiFi");
+                    break;
+                case PeerProperties.DISCOVERY_VIA_BLUETOOTH:
+                    textView.setText("via Bluetooth");
+                    break;
+                case PeerProperties.DISCOVERY_VIA_BLUETOOTH_LTE:
+                    textView.setText("via Bluetooth LTE");
+                    break;
+                case PeerProperties.DISCOVERY_VIA_UNKNOWN:
+                    textView.setText("");
+                    break;
+            }
+
             boolean hasIncomingConnection = mModel.hasConnectionToPeer(peerProperties, true);
             boolean hasOutgoingConnection = mModel.hasConnectionToPeer(peerProperties, false);
             ImageView outgoingConnectionIconImageView = (ImageView) view.findViewById(R.id.outgoingConnectionIconImageView);

@@ -178,6 +178,8 @@ class WifiServiceWatcher {
                     peerProperties.setDeviceAddress(p2pDevice.deviceAddress);
                 }
 
+                peerProperties.setDiscoveryMethod(PeerProperties.DISCOVERY_VIA_WIFI);
+
                 mListener.onServiceDiscovered(peerProperties);
             } else {
                 Log.i(TAG, "onDnsSdServiceAvailable: This not our service: " + mServiceType + " != " + serviceType);

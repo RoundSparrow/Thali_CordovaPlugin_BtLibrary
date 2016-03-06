@@ -88,6 +88,7 @@ class BluetoothClientThread extends AbstractBluetoothThread implements Bluetooth
         mBluetoothDeviceToConnectTo = bluetoothDeviceToConnectTo;
         mServiceRecordUuid = serviceRecordUuid;
         mPeerProperties = new PeerProperties();
+        mPeerProperties.setDiscoveryMethod(PeerProperties.DISCOVERY_VIA_BLUETOOTH);
     }
 
     /**
