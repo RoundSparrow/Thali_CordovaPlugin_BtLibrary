@@ -499,7 +499,12 @@ public class ConnectionEngine implements
 
                     // ToDo: we are inside the run() of a new Thread - that the autoconnect will attempt to create a handler - when looper.prepare() was never called.
                     // ToDo: for now, disable this automatic reconnect that seems to be the logic.  Let the Engine decide which peer to intiate and not just autoconnnect to the broken peer.
-                    // autoConnectIfEnabled(peerProperties);
+                    // Reverse the transfer with that partner, doing back and forth?
+                    if (! mIsShuttingDown) {
+                        Log.i(TAG, "onDisconnected: initiating reverse direction transfer to peer");
+                        autoConnectIfEnabled(peerProperties);
+                    }
+
                     MainActivity.updateOptionsMenu();
                 }
             }.start();
