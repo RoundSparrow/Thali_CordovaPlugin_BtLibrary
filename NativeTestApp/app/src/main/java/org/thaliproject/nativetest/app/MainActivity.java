@@ -284,6 +284,7 @@ public class MainActivity
         }
     }
 
+
     /**
      * The fragment adapter for tabs.
      */

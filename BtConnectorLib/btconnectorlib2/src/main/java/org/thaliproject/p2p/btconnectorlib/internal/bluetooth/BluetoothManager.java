@@ -247,6 +247,7 @@ public class BluetoothManager {
             try {
                 bluetoothDevice = mBluetoothAdapter.getRemoteDevice(address);
             } catch (IllegalArgumentException e) {
+                // Getting "is not a valid Bluetooth address"
                 Log.e(TAG, "getRemoteDevice: Failed to get the remote device: " + e.getMessage(), e);
             }
         } else {

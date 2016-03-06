@@ -179,6 +179,7 @@ public class PeerModel {
      * @param peerPropertiesToAddOrUpdate The peer properties to add/update.
      */
     public void addOrUpdateDiscoveredPeer(PeerProperties peerPropertiesToAddOrUpdate) {
+        Log.d(TAG, "addOrUpdateDiscoveredPeer SPOT_AA000");
         synchronized (this) {
             if (peerPropertiesToAddOrUpdate != null) {
                 //Log.v(TAG, "addOrUpdateDiscoveredPeer: " + peerProperties.toString());

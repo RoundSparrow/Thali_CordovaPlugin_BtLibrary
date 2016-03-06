@@ -57,6 +57,10 @@ public class PeerAndConnectionModel {
         if (mListener != null) {
             mListener.onDataChanged();
         }
+        else
+        {
+            Log.w(TAG, "onDataChanged was not called");
+        }
     }
 
     /**
@@ -103,12 +107,17 @@ public class PeerAndConnectionModel {
                 Log.i(TAG, "addOrUpdatePeer: Peer " + peerProperties.toString() + " already in the list");
             }
         } else {
+            Log.i(TAG, "addOrUpdatePeer: Peer " + peerProperties.toString() + " going to add to list");
             mPeers.add(peerProperties);
             Log.i(TAG, "addOrUpdatePeer: Peer " + peerProperties.toString() + " added to list");
         }
 
         if ((!alreadyInTheList || wasUpdated) && mListener != null) {
             mListener.onDataChanged();
+        }
+        else
+        {
+            Log.w(TAG, "onDataChanged was not called");
         }
 
         return !alreadyInTheList;
@@ -136,6 +145,10 @@ public class PeerAndConnectionModel {
 
         if (wasUpdated && mListener != null) {
             mListener.onDataChanged();
+        }
+        else
+        {
+            Log.w(TAG, "onDataChanged was not called");
         }
 
         return wasUpdated;
@@ -171,6 +184,10 @@ public class PeerAndConnectionModel {
         if (mListener != null) {
             mListener.onDataChanged();
         }
+        else
+        {
+            Log.w(TAG, "onDataChanged was not called");
+        }
     }
 
     /**
@@ -188,6 +205,10 @@ public class PeerAndConnectionModel {
             if (mListener != null) {
                 mListener.onDataChanged();
             }
+            else
+            {
+                Log.w(TAG, "onDataChanged was not called");
+            }
         }
 
         return !alreadyInTheList;
@@ -204,6 +225,10 @@ public class PeerAndConnectionModel {
 
         if (wasRemoved && mListener != null) {
             mListener.onDataChanged();
+        }
+        else
+        {
+            Log.w(TAG, "onDataChanged was not called");
         }
 
         return wasRemoved;
@@ -320,6 +345,10 @@ public class PeerAndConnectionModel {
 
         if (wasAddedOrRemoved && mListener != null) {
             mListener.onDataChanged();
+        }
+        else
+        {
+            Log.w(TAG, "onDataChanged was not called");
         }
 
         return wasAddedOrRemoved;

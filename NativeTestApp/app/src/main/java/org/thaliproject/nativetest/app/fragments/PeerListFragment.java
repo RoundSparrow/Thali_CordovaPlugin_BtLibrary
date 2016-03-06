@@ -13,6 +13,8 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
+
+import org.thaliproject.nativetest.app.BridgeSpot;
 import org.thaliproject.nativetest.app.model.Connection;
 import org.thaliproject.nativetest.app.model.PeerAndConnectionModel;
 import org.thaliproject.nativetest.app.R;
@@ -240,6 +242,7 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
         {
             peersTopInfoLayout.setVisibility(View.VISIBLE);
             peersTopInfo0.setText("No peers have been discovered, searching in background. The LOG tab should reveal status of serach activity.");
+            peersTopInfo1.setText("Status\n" + BridgeSpot.statusConnectionEngine);
         }
         else
         {
@@ -272,6 +275,7 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
             }
         });
     }
+
 
     class ListAdapter extends BaseAdapter {
         private LayoutInflater mInflater = null;
