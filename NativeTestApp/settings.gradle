@@ -1,1 +1,7 @@
 include ':app'
+include ':btconnectorlib2'
+
+project(':btconnectorlib2').projectDir           = new File(settingsDir, '../BtConnectorLib/btconnectorlib2')
+
+gradle.ext.version = "0.0.0";
+gradle.ext.group = "org.thaliproject.p2p.connectorlib"
