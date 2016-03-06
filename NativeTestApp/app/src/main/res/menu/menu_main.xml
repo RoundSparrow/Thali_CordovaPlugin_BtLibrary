@@ -31,4 +31,11 @@
           android:title="Reset"
           android:orderInCategory="101"
           app:showAsAction="never" />
+    <item
+        android:id="@+id/action_force_screen_on"
+        android:title="@string/action_force_screen_on"
+        android:checkable="true"
+        android:checked="true"
+        android:orderInCategory="101"
+        app:showAsAction="never"/>
 </menu>

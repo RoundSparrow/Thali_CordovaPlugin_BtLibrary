@@ -29,4 +29,5 @@
     </string-array>
 
     <string name="run_test">Run test</string>
+    <string name="action_force_screen_on">Screen On</string>
 </resources>

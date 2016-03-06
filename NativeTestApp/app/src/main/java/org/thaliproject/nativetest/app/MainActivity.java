@@ -4,7 +4,9 @@
 package org.thaliproject.nativetest.app;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
@@ -16,6 +18,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Toast;
 import org.thaliproject.nativetest.app.fragments.LogFragment;
 import org.thaliproject.nativetest.app.fragments.PeerListFragment;
@@ -32,6 +35,7 @@ public class MainActivity
         implements ActivityCompat.OnRequestPermissionsResultCallback, PeerListFragment.Listener, TestListener {
 
     private static final String TAG = MainActivity.class.getName();
+    private static final String PREF_KEY_SCREEN_ON = "mainActivityScreenOn";
 
     private static MainActivity mThisInstance = null;
     private static Context mContext = null;
@@ -59,6 +63,7 @@ public class MainActivity
     private LogFragment mLogFragment = null;
     private SettingsFragment mSettingsFragment = null;
     private TestsFragment mTestsFragment = null;
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +73,8 @@ public class MainActivity
 
         mThisInstance = this;
         mContext = getApplicationContext();
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
@@ -144,6 +151,16 @@ public class MainActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem menuItem_action_force_screen_on = menu.findItem(R.id.action_force_screen_on);
+        menuItem_action_force_screen_on.setChecked(preferences.getBoolean(PREF_KEY_SCREEN_ON, false));
+        if (menuItem_action_force_screen_on.isChecked()) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+        else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+
         return true;
     }
 
@@ -216,6 +233,16 @@ public class MainActivity
             case R.id.action_reset:
                 destroyEngine();
                 createAndStartEngine();
+                break;
+            case R.id.action_force_screen_on:
+                item.setChecked(! item.isChecked());
+                if (item.isChecked()) {
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                }
+                else {
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                }
+                preferences.edit().putBoolean(PREF_KEY_SCREEN_ON, item.isChecked()).commit();
                 break;
         }
 
