@@ -502,8 +502,14 @@ public class ConnectionEngine implements
                     // Reverse the transfer with that partner, doing back and forth?
                     if (! mIsShuttingDown) {
                         Log.i(TAG, "onDisconnected: initiating reverse direction transfer to peer");
-                        boolean goodConnect = autoConnectIfEnabled(peerProperties);
-                        Log.i(TAG, "onDisconnected: did reverse direction transfer to peer, result: " + goodConnect);
+                        try {
+                            boolean goodConnect = autoConnectIfEnabled(peerProperties);
+                            Log.i(TAG, "onDisconnected: did reverse direction transfer to peer, result: " + goodConnect);
+                        }
+                        catch (Exception e0)
+                        {
+                            Log.e(TAG, "Exception in the reverse direction transfer", e0);
+                        }
                     }
 
                     MainActivity.updateOptionsMenu();
