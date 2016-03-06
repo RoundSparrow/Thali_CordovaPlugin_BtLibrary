@@ -502,7 +502,8 @@ public class ConnectionEngine implements
                     // Reverse the transfer with that partner, doing back and forth?
                     if (! mIsShuttingDown) {
                         Log.i(TAG, "onDisconnected: initiating reverse direction transfer to peer");
-                        autoConnectIfEnabled(peerProperties);
+                        boolean goodConnect = autoConnectIfEnabled(peerProperties);
+                        Log.i(TAG, "onDisconnected: did reverse direction transfer to peer, result: " + goodConnect);
                     }
 
                     MainActivity.updateOptionsMenu();
@@ -546,7 +547,7 @@ public class ConnectionEngine implements
      *
      * @param peerProperties The peer properties.
      */
-    protected synchronized void autoConnectIfEnabled(PeerProperties peerProperties) {
+    protected synchronized boolean autoConnectIfEnabled(PeerProperties peerProperties) {
         if (!mIsShuttingDown) {
             if (mSettings.getAutoConnect() && !mModel.hasConnectionToPeer(peerProperties, false)) {
                 if (mSettings.getAutoConnectEvenWhenIncomingConnectionEstablished()
@@ -554,9 +555,11 @@ public class ConnectionEngine implements
                     // Do auto-connect
                     Log.i(TAG, "autoConnectIfEnabled: Auto-connecting to peer " + peerProperties.toString());
                     connect(peerProperties);
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     protected synchronized void restartNotifyStateChangedTimer() {
