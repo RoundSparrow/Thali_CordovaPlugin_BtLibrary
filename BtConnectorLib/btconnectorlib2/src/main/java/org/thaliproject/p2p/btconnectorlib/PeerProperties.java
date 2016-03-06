@@ -222,7 +222,7 @@ public class PeerProperties {
 
     @Override
     public String toString() {
-        return "[" + mName + " " + mBluetoothMacAddress + "]";
+        return "[" + mName + " " + mBluetoothMacAddress + " " + discoveryMethodMostRecent + "]";
     }
 
     /**
