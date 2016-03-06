@@ -6,9 +6,11 @@ package org.thaliproject.nativetest.app.fragments;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
@@ -21,7 +23,7 @@ import org.thaliproject.p2p.btconnectorlib.PeerProperties;
 /**
  * A fragment containing the list of discovered peers.
  */
-@TargetApi(22)
+// @TargetApi(22)
 public class PeerListFragment extends Fragment implements PeerAndConnectionModel.Listener {
     public interface Listener {
         void onPeerSelected(PeerProperties peerProperties);
@@ -114,12 +116,23 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
         mModel = PeerAndConnectionModel.getInstance();
         mContext = view.getContext();
 
-        mIncomingConnectionIconNotConnected = getResources().getDrawable(R.drawable.ic_arrow_downward_gray_24dp, mContext.getTheme());
-        mIncomingConnectionIconConnected = getResources().getDrawable(R.drawable.ic_arrow_downward_blue_24dp, mContext.getTheme());
-        mIncomingConnectionIconDataFlowing = getResources().getDrawable(R.drawable.ic_arrow_downward_green_24dp, mContext.getTheme());
-        mOutgoingConnectionIconNotConnected = getResources().getDrawable(R.drawable.ic_arrow_upward_gray_24dp, mContext.getTheme());
-        mOutgoingConnectionIconConnected = getResources().getDrawable(R.drawable.ic_arrow_upward_blue_24dp, mContext.getTheme());
-        mOutgoingConnectionIconDataFlowing = getResources().getDrawable(R.drawable.ic_arrow_upward_green_24dp, mContext.getTheme());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mIncomingConnectionIconNotConnected = getResources().getDrawable(R.drawable.ic_arrow_downward_gray_24dp, mContext.getTheme());
+            mIncomingConnectionIconConnected = getResources().getDrawable(R.drawable.ic_arrow_downward_blue_24dp, mContext.getTheme());
+            mIncomingConnectionIconDataFlowing = getResources().getDrawable(R.drawable.ic_arrow_downward_green_24dp, mContext.getTheme());
+            mOutgoingConnectionIconNotConnected = getResources().getDrawable(R.drawable.ic_arrow_upward_gray_24dp, mContext.getTheme());
+            mOutgoingConnectionIconConnected = getResources().getDrawable(R.drawable.ic_arrow_upward_blue_24dp, mContext.getTheme());
+            mOutgoingConnectionIconDataFlowing = getResources().getDrawable(R.drawable.ic_arrow_upward_green_24dp, mContext.getTheme());
+        }
+        else
+        {
+            mIncomingConnectionIconNotConnected = ContextCompat.getDrawable(mContext, R.drawable.ic_arrow_downward_gray_24dp);
+            mIncomingConnectionIconConnected = ContextCompat.getDrawable(mContext, R.drawable.ic_arrow_downward_blue_24dp);
+            mIncomingConnectionIconDataFlowing = ContextCompat.getDrawable(mContext, R.drawable.ic_arrow_downward_green_24dp);
+            mOutgoingConnectionIconNotConnected = ContextCompat.getDrawable(mContext, R.drawable.ic_arrow_upward_gray_24dp);
+            mOutgoingConnectionIconConnected = ContextCompat.getDrawable(mContext, R.drawable.ic_arrow_upward_blue_24dp);
+            mOutgoingConnectionIconDataFlowing = ContextCompat.getDrawable(mContext, R.drawable.ic_arrow_upward_green_24dp);
+        }
 
         mListAdapter = new ListAdapter(mContext);
 
