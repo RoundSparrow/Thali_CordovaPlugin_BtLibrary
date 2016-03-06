@@ -55,6 +55,7 @@ public class PeerAndConnectionModel {
      */
     public void notifyListenersOnDataChanged() {
         if (mListener != null) {
+            Log.i(TAG, "onDataChanged SPOTAB400");
             mListener.onDataChanged();
         }
         else
@@ -113,6 +114,7 @@ public class PeerAndConnectionModel {
         }
 
         if ((!alreadyInTheList || wasUpdated) && mListener != null) {
+            Log.i(TAG, "onDataChanged SPOTAB100");
             mListener.onDataChanged();
         }
         else
@@ -144,6 +146,7 @@ public class PeerAndConnectionModel {
         }
 
         if (wasUpdated && mListener != null) {
+            Log.i(TAG, "onDataChanged SPOTAB600");
             mListener.onDataChanged();
         }
         else
@@ -182,6 +185,7 @@ public class PeerAndConnectionModel {
         mPeers.clear();
 
         if (mListener != null) {
+            Log.i(TAG, "onDataChanged SPOTAB300");
             mListener.onDataChanged();
         }
         else
@@ -203,6 +207,7 @@ public class PeerAndConnectionModel {
             mPeersBeingConnectedTo.add(peerProperties);
 
             if (mListener != null) {
+                Log.i(TAG, "onDataChanged SPOTAB200");
                 mListener.onDataChanged();
             }
             else
@@ -224,6 +229,7 @@ public class PeerAndConnectionModel {
         boolean wasRemoved = removePeerPropertiesFromList(peerProperties, mPeersBeingConnectedTo);
 
         if (wasRemoved && mListener != null) {
+            Log.i(TAG, "onDataChanged SPOTAB500");
             mListener.onDataChanged();
         }
         else
@@ -344,6 +350,7 @@ public class PeerAndConnectionModel {
         }
 
         if (wasAddedOrRemoved && mListener != null) {
+            Log.i(TAG, "onDataChanged SPOTAB000");
             mListener.onDataChanged();
         }
         else
