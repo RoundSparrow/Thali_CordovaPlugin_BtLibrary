@@ -704,6 +704,7 @@ public class DiscoveryManager
                     Log.d(TAG, "onP2pDeviceListChanged Peer " + (index + 1) + ": "
                             + wifiP2pDevice.deviceName + " " + wifiP2pDevice.deviceAddress);
 
+                    // ToDO: are we mixing up Bluetooth MAC Addresses with WiFi MAC Addresses?
                     PeerProperties peerProperties = mPeerModel.getDiscoveredPeerByDeviceAddress(wifiP2pDevice.deviceAddress);
 
                     if (peerProperties != null) {
@@ -711,8 +712,15 @@ public class DiscoveryManager
                     }
                     else
                     {
-                        Log.d(TAG,  "onP2pDeviceListChanged ALREADY_KNOWN Peer " + (index + 1) + ": "
-                                + wifiP2pDevice.deviceName + " " + wifiP2pDevice.deviceAddress);
+                        peerProperties = new PeerProperties();
+                        peerProperties.setName(wifiP2pDevice.deviceName);
+                        peerProperties.setDeviceAddress(wifiP2pDevice.deviceAddress);
+                        peerProperties.setDiscoveryMethod(PeerProperties.DISCOVERY_VIA_WIFI_PEERLIST);
+
+                        mPeerModel.addOrUpdateDiscoveredPeer(peerProperties);
+
+                        Log.d(TAG,  "onP2pDeviceListChanged PREVIOUSLY_UNKNOWN Peer " + (index + 1) + ": "
+                                + wifiP2pDevice.toString());
                     }
                 }
 

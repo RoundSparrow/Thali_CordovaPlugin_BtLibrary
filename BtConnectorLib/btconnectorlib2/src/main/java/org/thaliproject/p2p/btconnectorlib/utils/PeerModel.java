@@ -180,8 +180,7 @@ public class PeerModel {
      */
     public void addOrUpdateDiscoveredPeer(PeerProperties peerPropertiesToAddOrUpdate) {
         Log.d(TAG, "addOrUpdateDiscoveredPeer SPOT_AA000 " + peerPropertiesToAddOrUpdate.toString());
-        if (peerPropertiesToAddOrUpdate.getBluetoothMacAddress().startsWith("40:88:5:"))
-            throw new RuntimeException("Malformed BluetoothMacAddress");
+
         synchronized (this) {
             if (peerPropertiesToAddOrUpdate != null) {
                 //Log.v(TAG, "addOrUpdateDiscoveredPeer: " + peerProperties.toString());

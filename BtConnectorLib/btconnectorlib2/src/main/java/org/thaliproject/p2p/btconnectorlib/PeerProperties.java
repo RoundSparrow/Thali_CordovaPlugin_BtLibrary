@@ -14,6 +14,7 @@ public class PeerProperties {
     public static final int DISCOVERY_VIA_WIFI = 1;
     public static final int DISCOVERY_VIA_BLUETOOTH = 2;
     public static final int DISCOVERY_VIA_BLUETOOTH_LE = 3;
+    public static final int DISCOVERY_VIA_WIFI_PEERLIST = 4;
 
     private int discoveryMethodMostRecent = DISCOVERY_VIA_UNKNOWN;
     private String mName; // The peer name
@@ -76,6 +77,10 @@ public class PeerProperties {
      * @return The identifier of this peer, which is its Bluetooth MAC address.
      */
     public String getId() {
+        if (mBluetoothMacAddress == null)
+        {
+            return mDeviceAddress;
+        }
         return mBluetoothMacAddress;
     }
 

@@ -186,7 +186,14 @@ public class ConnectionManager
         boolean success = false;
 
         if (peerToConnectTo != null) {
+            if (peerToConnectTo.getBluetoothMacAddress() == null)
+            {
+                Log.w(TAG, "No Bluetooth Address for that target: " + peerToConnectTo.toString());
+                return false;
+            }
+
             Log.i(TAG, "connect: " + peerToConnectTo.toString());
+
 
             try {
                 BluetoothDevice device = mBluetoothManager.getRemoteDevice(peerToConnectTo.getBluetoothMacAddress());

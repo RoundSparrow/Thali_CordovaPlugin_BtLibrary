@@ -95,7 +95,7 @@ class BluetoothServerThread extends AbstractBluetoothThread implements Bluetooth
                 Log.e(TAG, "run: Failed to start listening: " + e.getMessage(), e);
                 // For the sake of device sanity pause a little
                 try {
-                    Thread.sleep(1000L);
+                    Thread.sleep(1200L);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                     return;
