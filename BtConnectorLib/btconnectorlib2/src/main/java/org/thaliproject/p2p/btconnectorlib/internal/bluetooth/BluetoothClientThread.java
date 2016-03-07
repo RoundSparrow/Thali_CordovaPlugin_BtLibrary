@@ -106,22 +106,28 @@ class BluetoothClientThread extends AbstractBluetoothThread implements Bluetooth
      */
     @Override
     public void run() {
-        Log.i(TAG, "Trying to connect to peer with address "
+        Log.i(TAG, "Trying to connect to Bluetooth peer with address "
                 + mBluetoothDeviceToConnectTo.getAddress()
-                + " (thread ID: " + getId() + ")");
+                + " (thread " + Thread.currentThread() + ")");
 
         mTimeStarted = new Date().getTime();
+        Log.d(TAG, "Bluetooth peer SPOTBA100");
         boolean socketConnectSucceeded = tryToConnect();
+        Log.d(TAG, "Bluetooth peer SPOTBA101");
 
         if (mHandshakeRequired && socketConnectSucceeded && !mIsShuttingDown) {
             String errorMessage = "";
 
             try {
+                Log.d(TAG, "Bluetooth peer SPOTBA000");
                 mHandshakeThread = new BluetoothSocketIoThread(mBluetoothSocket, this);
                 mHandshakeThread.setUncaughtExceptionHandler(this.getUncaughtExceptionHandler());
                 mHandshakeThread.setExitThreadAfterRead(true);
+                Log.d(TAG, "Bluetooth peer SPOTBA001");
                 mHandshakeThread.start();
+                Log.d(TAG, "Bluetooth peer SPOTBA002");
                 boolean handshakeSucceeded = mHandshakeThread.write(getHandshakeMessage()); // This does not throw exceptions
+                Log.d(TAG, "Bluetooth peer SPOTBA003");
 
                 if (handshakeSucceeded) {
                     Log.d(TAG, "Outgoing connection initialized (*handshake* thread ID: "
@@ -148,14 +154,18 @@ class BluetoothClientThread extends AbstractBluetoothThread implements Bluetooth
                 if (mListener != null) {
                     mListener.onConnectionFailed(mPeerProperties, errorMessage, this);
                 }
+            } catch (Exception e) {
+                errorMessage = "Unexpected error 2: " + e.getMessage();
+                Log.e(TAG, errorMessage, e);
             }
+            Log.d(TAG, "Bluetooth peer SPOTBA010");
         }
 
         if (mIsShuttingDown) {
             mIsShuttingDown = false;
         }
 
-        Log.i(TAG, "Exiting thread (thread ID: " + getId() + ")");
+        Log.i(TAG, "Exiting thread (thread " + Thread.currentThread() + ")");
     }
 
     /**
@@ -198,10 +208,11 @@ class BluetoothClientThread extends AbstractBluetoothThread implements Bluetooth
      */
     @Override
     public synchronized void shutdown() {
-        Log.d(TAG, "shutdown (thread ID: " + getId() + ")");
+        Log.d(TAG, "shutdown SPOTAC000 (" + Thread.currentThread() + ")");
         mIsShuttingDown = true;
         mListener = null;
         close();
+        Log.d(TAG, "shutdown finished SPOTAC000 (" + Thread.currentThread() + ")");
     }
 
     /**
@@ -275,7 +286,7 @@ class BluetoothClientThread extends AbstractBluetoothThread implements Bluetooth
     public void onDisconnected(String reason, BluetoothSocketIoThread who) {
         final long threadId = who.getId();
         final PeerProperties peerProperties = who.getPeerProperties();
-        Log.i(TAG, "onDisconnected: " + peerProperties.toString() + " (thread ID: " + threadId + ")");
+        Log.i(TAG, "onDisconnected: " + peerProperties.toString() + " (thread " + Thread.currentThread() + ")");
 
         // If we were successful, the handshake thread instance was set to null
         if (mHandshakeThread != null) {
@@ -319,10 +330,13 @@ class BluetoothClientThread extends AbstractBluetoothThread implements Bluetooth
         // Make sure the current socket, if one exists, is closed
         if (mBluetoothSocket != null) {
             try {
+                Log.d(TAG, "Bluetooth peer SPOTBA400");
                 mBluetoothSocket.close();
             } catch (IOException e) {
+                Log.d(TAG, "Bluetooth peer SPOTBA401");
             }
         }
+        Log.d(TAG, "Bluetooth peer SPOTBA402");
 
         boolean socketCreatedSuccessfully = false;
         Exception exception = null;
@@ -330,35 +344,58 @@ class BluetoothClientThread extends AbstractBluetoothThread implements Bluetooth
         try {
             if (port == SYSTEM_DECIDED_INSECURE_RFCOMM_SOCKET_PORT) {
                 // Use the standard method of creating a socket
+                Log.d(TAG, "Bluetooth peer SPOTBA403");
                 mBluetoothSocket = mBluetoothDeviceToConnectTo.createInsecureRfcommSocketToServiceRecord(mServiceRecordUuid);
+                Log.d(TAG, "Bluetooth peer SPOTBA404");
             } else if (port == 0) {
+                Log.d(TAG, "Bluetooth peer SPOTBA405");
                 // Use a rotating port number
                 mBluetoothSocket = BluetoothUtils.createBluetoothSocketToServiceRecordWithNextPort(
                         mBluetoothDeviceToConnectTo, mServiceRecordUuid, false);
+                Log.d(TAG, "Bluetooth peer SPOTBA406");
             } else {
                 // Use the given port number
+                Log.d(TAG, "Bluetooth peer SPOTBA407");
                 mBluetoothSocket = BluetoothUtils.createBluetoothSocketToServiceRecord(
                         mBluetoothDeviceToConnectTo, mServiceRecordUuid, port, false);
+                Log.d(TAG, "Bluetooth peer SPOTBA408");
             }
 
+            Log.d(TAG, "Bluetooth peer SPOTBA409");
             socketCreatedSuccessfully = true;
         } catch (IOException e) {
+            Log.d(TAG, "Bluetooth peer SPOTBA409A");
             exception = e;
+        } catch (Exception e1) {
+            Log.d(TAG, "Bluetooth peer SPOTBA409B");
         }
 
+        Log.d(TAG, "Bluetooth peer SPOTBA410");
         if (socketCreatedSuccessfully) {
             try {
+                Log.d(TAG, "Bluetooth peer SPOTBA411");
                 mBluetoothSocket.connect(); // Blocking call
+                Log.d(TAG, "Bluetooth peer SPOTBA412");
             } catch (IOException e) {
                 exception = e;
 
                 try {
+                    Log.d(TAG, "Bluetooth peer SPOTBA413");
                     mBluetoothSocket.close();
+                    Log.d(TAG, "Bluetooth peer SPOTBA4014");
                 } catch (IOException e2) {
+                    Log.d(TAG, "Bluetooth peer SPOTBA4014A");
+                } catch (Exception e3) {
+                    Log.d(TAG, "Bluetooth peer SPOTBA4014B");
                 }
+                Log.d(TAG, "Bluetooth peer SPOTBA415");
+            } catch (Exception e1)
+            {
+                Log.e(TAG, "Bluetooth peer SPOTB416 exception ", e1);
             }
         }
 
+        Log.d(TAG, "Bluetooth peer SPOTBA417");
         return exception;
     }
 
@@ -368,16 +405,21 @@ class BluetoothClientThread extends AbstractBluetoothThread implements Bluetooth
      * @return True, if successful. False otherwise.
      */
     private synchronized boolean tryToConnect() {
+        Log.d(TAG, "Bluetooth peer SPOTBA200");
         boolean socketConnectSucceeded = false;
         String errorMessage = "";
         int socketConnectAttemptNo = 1;
 
+        Log.d(TAG, "Bluetooth peer SPOTBA201");
         while (!socketConnectSucceeded && !mIsShuttingDown) {
+            Log.d(TAG, "Bluetooth peer SPOTBA201A");
             Exception socketException = createSocketAndConnect(mInsecureRfcommSocketPort);
 
+            Log.d(TAG, "Bluetooth peer SPOTBA202");
             if (socketException == null) {
                 if (!mIsShuttingDown) {
                     if (mListener != null) {
+                        Log.d(TAG, "Bluetooth peer SPOTBA203");
                         mListener.onSocketConnected(mBluetoothSocket, mPeerProperties, this);
                     }
 
@@ -386,6 +428,7 @@ class BluetoothClientThread extends AbstractBluetoothThread implements Bluetooth
                     // Log the choice of port
                     String logMessage = "Socket connection succeeded";
 
+                    Log.d(TAG, "Bluetooth peer SPOTBA204");
                     if (mInsecureRfcommSocketPort == 0) {
                         logMessage += " (using port" + BluetoothUtils.getPreviouslyUsedAlternativeChannelOrPort() + ")";
                     } else if (mInsecureRfcommSocketPort > 0) {

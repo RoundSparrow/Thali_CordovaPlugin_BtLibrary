@@ -20,8 +20,8 @@ android {
         applicationId "org.thaliproject.nativetest.app"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 4
-        versionName "1.0.4"
+        versionCode 6
+        versionName "1.0.6"
     }
 
     compileOptions {

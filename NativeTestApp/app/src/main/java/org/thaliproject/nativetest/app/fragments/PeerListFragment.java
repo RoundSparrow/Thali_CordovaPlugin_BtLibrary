@@ -229,16 +229,21 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
 
     @Override
     public void onDataChanged() {
-        Log.i(TAG, "onDataChanged");
+        Log.i(TAG, "onDataChanged PeerListFragment");
 
         mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
                 mPeerListAdapter.setFreshData(mModel.getPeers());
 
-                mPeerListAdapter.notifyDataSetChanged();
+                ((BaseAdapter)(mListView).getAdapter()).notifyDataSetChanged();
+                // mPeerListAdapter.notifyDataSetChanged();
+
+                Log.i(TAG, "onDataChanged PeerListFragment Runnable after notify");
 
                 showTopMessagInfo();
+
+                Log.i(TAG, "onDataChanged PeerListFragment Runnable ending");
             }
         });
     }
@@ -269,23 +274,23 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
             peerRemovedWasSelected = false;
         }
 
-        // DISABLED until we track down crash!
-        if (1==2) {
-            mainThreadHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (peerRemovedWasSelected) {
-                        mListener.onPeerSelected(null);
-                    }
-
-                    mPeerListAdapter.notifyDataSetChanged();
+        // Remove this delay. For now, it is only to allow logcat to catch up before crash
+        mainThreadHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG, "onPeerRemoved Runnable starting");
+                if (peerRemovedWasSelected) {
+                    mListener.onPeerSelected(null);
                 }
-            });
-        }
+
+                mPeerListAdapter.notifyDataSetChanged();
+            }
+        }, 100L);
     }
 
 
     class PeersListAdapter extends BaseAdapter {
+        private boolean USE_DEDICATED_COPY_OF_DATA_HACK = false;
         private LayoutInflater mInflater = null;
         private Context mContext;
 
@@ -298,30 +303,38 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
 
         public void setFreshData(ArrayList<PeerProperties> freshDataPeerList)
         {
-            // This is still a shallow copy, but at least it doesn't allow add and remove of items in unexpected places
-            // dedicatedCopyOfPeers.clear();
+            if (USE_DEDICATED_COPY_OF_DATA_HACK) {
 
-            // dedicatedCopyOfPeers.addAll(freshDataPeerList);
+                Collection<PeerProperties> deepCopy = new HashSet<PeerProperties>(freshDataPeerList.size());
 
-            Collection<PeerProperties> deepCopy = new HashSet<PeerProperties>(freshDataPeerList.size());
+                Iterator<PeerProperties> iterator = freshDataPeerList.iterator();
+                while (iterator.hasNext()) {
+                    deepCopy.add(iterator.next().freshCopy());
+                }
 
-            Iterator<PeerProperties> iterator = freshDataPeerList.iterator();
-            while(iterator.hasNext()){
-                deepCopy.add(iterator.next().freshCopy());
+                dedicatedCopyOfPeers.clear();
+                dedicatedCopyOfPeers.addAll(deepCopy);
             }
-
-            dedicatedCopyOfPeers.clear();
-            dedicatedCopyOfPeers.addAll(deepCopy);
         }
 
         @Override
         public int getCount() {
-            return dedicatedCopyOfPeers.size();
+            if (USE_DEDICATED_COPY_OF_DATA_HACK) {
+                return dedicatedCopyOfPeers.size();
+            }
+            else {
+                return mModel.getPeers().size();
+            }
         }
 
         @Override
         public Object getItem(int position) {
-            return dedicatedCopyOfPeers.get(position);
+            if (USE_DEDICATED_COPY_OF_DATA_HACK) {
+                return dedicatedCopyOfPeers.get(position);
+            }
+            else {
+                return mModel.getPeers().get(position);
+            }
         }
 
         @Override
@@ -337,7 +350,13 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
                 view = mInflater.inflate(R.layout.list_item_peer, null);
             }
 
-            PeerProperties peerProperties = dedicatedCopyOfPeers.get(position);
+            PeerProperties peerProperties;
+            if (USE_DEDICATED_COPY_OF_DATA_HACK) {
+                peerProperties = dedicatedCopyOfPeers.get(position);
+            }
+            else {
+                peerProperties = mModel.getPeers().get(position);
+            }
 
             TextView textView = (TextView) view.findViewById(R.id.peerName);
             textView.setText(peerProperties.getName());

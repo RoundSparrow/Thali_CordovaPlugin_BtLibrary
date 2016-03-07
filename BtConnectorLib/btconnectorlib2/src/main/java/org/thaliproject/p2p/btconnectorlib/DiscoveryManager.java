@@ -701,13 +701,18 @@ public class DiscoveryManager
 
             for (WifiP2pDevice wifiP2pDevice : p2pDeviceList) {
                 if (wifiP2pDevice != null) {
-                    Log.d(TAG, "onP2pDeviceListChanged: Peer " + (index + 1) + ": "
+                    Log.d(TAG, "onP2pDeviceListChanged Peer " + (index + 1) + ": "
                             + wifiP2pDevice.deviceName + " " + wifiP2pDevice.deviceAddress);
 
                     PeerProperties peerProperties = mPeerModel.getDiscoveredPeerByDeviceAddress(wifiP2pDevice.deviceAddress);
 
                     if (peerProperties != null) {
                         mPeerModel.addOrUpdateDiscoveredPeer(peerProperties);
+                    }
+                    else
+                    {
+                        Log.d(TAG,  "onP2pDeviceListChanged ALREADY_KNOWN Peer " + (index + 1) + ": "
+                                + wifiP2pDevice.deviceName + " " + wifiP2pDevice.deviceAddress);
                     }
                 }
 

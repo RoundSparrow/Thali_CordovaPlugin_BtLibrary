@@ -93,6 +93,13 @@ class BluetoothServerThread extends AbstractBluetoothThread implements Bluetooth
                                 mBluetoothName, mServiceRecordUuid);
             } catch (IOException e) {
                 Log.e(TAG, "run: Failed to start listening: " + e.getMessage(), e);
+                // For the sake of device sanity pause a little
+                try {
+                    Thread.sleep(1000L);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                    return;
+                }
             }
 
             if (mBluetoothServerSocket != null && !mStopThread) {
