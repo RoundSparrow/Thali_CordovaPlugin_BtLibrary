@@ -212,7 +212,7 @@ public class PeerAndConnectionModel {
             }
             else
             {
-                Log.w(TAG, "onDataChanged was not called");
+                Log.w(TAG, "onDataChanged was not called SPOTAB200");
             }
         }
 

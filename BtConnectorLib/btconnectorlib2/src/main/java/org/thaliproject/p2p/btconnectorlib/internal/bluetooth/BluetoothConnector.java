@@ -171,7 +171,7 @@ public class BluetoothConnector
             mConnectionTimeoutInMilliseconds = connectionTimeoutInMilliseconds;
 
             if (mConnectionTimeoutInMilliseconds > 0 && mClientThreads.size() > 0) {
-                createConnectionTimeoutTimer();
+                createConnectionTimeoutTimer(false /* Do not start */);
             } else {
                 if (mConnectionTimeoutTimer != null) {
                     mConnectionTimeoutTimer.cancel();
@@ -345,8 +345,7 @@ public class BluetoothConnector
 
                 if (mConnectionTimeoutTimer == null) {
                     try {
-                        createConnectionTimeoutTimer();
-                        mConnectionTimeoutTimer.start();
+                        createConnectionTimeoutTimer(true /* DoStart*/);
                     } catch (RuntimeException e) {
                         Log.e(TAG, "connect: Failed to create the connection timeout timer: " + e.getMessage(), e);
                     }
@@ -595,66 +594,79 @@ public class BluetoothConnector
      * Constructs the connection timeout timer. If a timer instance already exists, it is cancelled
      * and then recreated.
      */
-    private void createConnectionTimeoutTimer() {
+    private void createConnectionTimeoutTimer(final boolean doStart) {
         if (mConnectionTimeoutTimer != null) {
             mConnectionTimeoutTimer.cancel();
             mConnectionTimeoutTimer = null;
         }
 
-        mConnectionTimeoutTimer = new CountDownTimer(
-                CONNECTION_TIMEOUT_TIMER_INTERVAL_IN_MILLISECONDS, CONNECTION_TIMEOUT_TIMER_INTERVAL_IN_MILLISECONDS) {
+        // Issue https://github.com/thaliproject/Thali_CordovaPlugin_BtLibrary/issues/49
+        // mHandler is created on the main thraed looper, so create the new CountDownTimer object on that thread.
+        mHandler.post(new Runnable() {
             @Override
-            public void onTick(long millisUntilFinished) {
-                // Not used
-            }
+            public void run() {
 
-            @Override
-            public void onFinish() {
-                this.cancel();
-                long currentTime = new Date().getTime();
-                Iterator<BluetoothClientThread> iterator = mClientThreads.iterator();
+                mConnectionTimeoutTimer = new CountDownTimer(
+                        CONNECTION_TIMEOUT_TIMER_INTERVAL_IN_MILLISECONDS, CONNECTION_TIMEOUT_TIMER_INTERVAL_IN_MILLISECONDS) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        // Not used
+                    }
 
-                while (iterator.hasNext()) {
-                    final BluetoothClientThread bluetoothClientThread = iterator.next();
-                    long timeStarted = bluetoothClientThread.getTimeStarted();
+                    @Override
+                    public void onFinish() {
+                        this.cancel();
+                        long currentTime = new Date().getTime();
+                        Iterator<BluetoothClientThread> iterator = mClientThreads.iterator();
 
-                    if (timeStarted > 0 && currentTime > timeStarted + mConnectionTimeoutInMilliseconds) {
-                        // Got a client thread that needs to be cancelled
-                        mClientThreads.remove(bluetoothClientThread);
-                        final PeerProperties peerProperties = bluetoothClientThread.getPeerProperties();
+                        while (iterator.hasNext()) {
+                            final BluetoothClientThread bluetoothClientThread = iterator.next();
+                            long timeStarted = bluetoothClientThread.getTimeStarted();
 
-                        if (peerProperties != null) {
-                            Log.i(TAG, "Connection timeout for peer "
-                                    + peerProperties.toString() + " (thread ID: "
-                                    + bluetoothClientThread.getId() + ")");
-                        } else {
-                            Log.i(TAG, "Connection timeout" + " (thread ID: "
-                                    + bluetoothClientThread.getId() + ")");
+                            if (timeStarted > 0 && currentTime > timeStarted + mConnectionTimeoutInMilliseconds) {
+                                // Got a client thread that needs to be cancelled
+                                mClientThreads.remove(bluetoothClientThread);
+                                final PeerProperties peerProperties = bluetoothClientThread.getPeerProperties();
+
+                                if (peerProperties != null) {
+                                    Log.i(TAG, "Connection timeout for peer "
+                                            + peerProperties.toString() + " (thread ID: "
+                                            + bluetoothClientThread.getId() + ")");
+                                } else {
+                                    Log.i(TAG, "Connection timeout" + " (thread ID: "
+                                            + bluetoothClientThread.getId() + ")");
+                                }
+
+                                new Thread() {
+                                    @Override
+                                    public void run() {
+                                        bluetoothClientThread.shutdown(); // Try to cancel
+                                    }
+                                }.start();
+
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mListener.onConnectionTimeout(peerProperties);
+                                    }
+                                });
+                            }
                         }
 
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                bluetoothClientThread.shutdown(); // Try to cancel
-                            }
-                        }.start();
-
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                mListener.onConnectionTimeout(peerProperties);
-                            }
-                        });
+                        if (mClientThreads.size() > 0) {
+                            this.start(); // Restart
+                        } else {
+                            mConnectionTimeoutTimer = null;
+                        }
                     }
-                }
+                };
 
-                if (mClientThreads.size() > 0) {
-                    this.start(); // Restart
-                } else {
-                    mConnectionTimeoutTimer = null;
+                if (doStart)
+                {
+                    mConnectionTimeoutTimer.start();
                 }
-            }
-        };
+            } // end Runnable Run() method
+        });
     }
 
     /**

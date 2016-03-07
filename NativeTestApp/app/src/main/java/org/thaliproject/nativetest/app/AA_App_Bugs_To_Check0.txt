@@ -2,6 +2,25 @@
 Bug 0001:
 "The content of the adapter has changed but ListView did not receive a notification. Make sure the content of your adapter is not modified from a background thread, but only from the UI thread. Make sure your adapter calls notifyDataSetChanged() when its content changes."
 
+03-06 16:57:09.423 10588-12413/? I/org.thaliproject.p2p.btconnectorlib.ConnectionManager: onConnecting: LS620 50:55:27:7B:03:EB
+03-06 16:57:09.423 10588-12413/? D/org.thaliproject.p2p.btconnectorlib.internal.bluetooth.BluetoothConnector: connect: Started connecting to LS620 in address 50:55:27:7B:03:EB
+03-06 16:57:09.424 10588-12413/? I/org.thaliproject.nativetest.app.model.PeerAndConnectionModel: onDataChanged SPOTAB200
+03-06 16:57:09.424 10588-12413/? I/org.thaliproject.nativetest.app.fragments.PeerListFragment: onDataChanged
+03-06 16:57:09.424 10588-12413/? D/org.thaliproject.nativetest.app.MainActivity: updateOptionsMenu
+03-06 16:57:09.427 10588-12413/? I/org.thaliproject.nativetest.app.ConnectionEngine: onDisconnected: did reverse direction transfer to peer, result: true
+03-06 16:57:09.427 10588-12413/? D/org.thaliproject.nativetest.app.MainActivity: updateOptionsMenu
+03-06 16:57:09.428 10588-12414/? I/org.thaliproject.p2p.btconnectorlib.internal.bluetooth.BluetoothClientThread: Trying to connect to peer with address 50:55:27:7B:03:EB (thread ID: 1364)
+03-06 16:57:09.428 10588-12414/? W/BluetoothAdapter: getBluetoothService() called with no BluetoothManagerCallback
+03-06 16:57:09.429 2747-9837/? D/BTIF_SOCK: service_uuid: 9ab3c173-66d5-4da6-9e23-e8ce520b479b
+03-06 16:57:09.430 2747-2920/? W/bt-l2cap: L2CA_ErtmConnectReq()  PSM: 0x0001  BDA: 5055277b03eb  p_ertm_info: 0x00000000 allowed:0x0 preferred:0
+03-06 16:57:09.430 2747-2920/? W/bt-l2cap: L2CAP - st: CLOSED evt: 21
+03-06 16:57:09.430 2747-2920/? W/bt-l2cap: L2CAP - st: CLOSED evt: 7
+03-06 16:57:09.442 10588-10588/? D/AndroidRuntime: Shutting down VM
+03-06 16:57:09.448 10588-10588/? E/AndroidRuntime: FATAL EXCEPTION: main
+	Process: org.thaliproject.nativetest.app, PID: 10588
+	java.lang.IllegalStateException: The content of the adapter has changed but ListView did not receive a notification. Make sure the content of your adapter is not modified from a background thread, but only from the UI thread. Make sure your adapter calls notifyDataSetChanged() when its content changes. [in ListView(2131558482, class android.widget.ListView) with Adapter(class org.thaliproject.nativetest.app.fragments.LogFragment$ListAdapter)]
+
+
 Bug 0002:
 getRemoteDevice: Failed to get the remote device: 40:88:5:7F:FB:73 is not a valid Bluetooth address
 java.lang.IllegalArgumentException: 40:88:5:7F:FB:73 is not a valid Bluetooth address

@@ -442,18 +442,16 @@ class BlePeerDiscoveryUtils {
      * Since Java does not have unsigned bytes we have to use signed 8 bit integers.
      * @param bluetoothAddressAsInt8Array The integer array containing the Bluetooth address.
      * @return The parsed Bluetooth address.
+     * Code bug issue https://github.com/thaliproject/Thali_CordovaPlugin_BtLibrary/issues/50
      */
     private static String int8ArrayToBluetoothAddress(int[] bluetoothAddressAsInt8Array) {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (int i = 0; i < bluetoothAddressAsInt8Array.length; ++i) {
-            stringBuilder.append(Integer.toHexString(bluetoothAddressAsInt8Array[i] & 0xff));
-
-            if (i < bluetoothAddressAsInt8Array.length - 1) {
-                stringBuilder.append(BLUETOOTH_ADDRESS_SEPARATOR);
-            }
-        }
-
-        return stringBuilder.toString().toUpperCase();
+        return String.format("%02X:%02X:%02X:%02X:%02X:%02X",
+                (bluetoothAddressAsInt8Array[0] & 0xff),
+                (bluetoothAddressAsInt8Array[1] & 0xff),
+                (bluetoothAddressAsInt8Array[2] & 0xff),
+                (bluetoothAddressAsInt8Array[3] & 0xff),
+                (bluetoothAddressAsInt8Array[4] & 0xff),
+            (bluetoothAddressAsInt8Array[5] & 0xff)
+        );
     }
 }
