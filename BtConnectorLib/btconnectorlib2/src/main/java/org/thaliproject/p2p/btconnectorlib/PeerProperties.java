@@ -261,4 +261,16 @@ public class PeerProperties {
     private static boolean isNullOrEmpty(String stringToCheck) {
         return (stringToCheck == null || stringToCheck.length() == 0);
     }
+
+    public PeerProperties freshCopy() {
+        // String name, String bluetoothMacAddress, String serviceType, String deviceAddress, String deviceNam
+        PeerProperties freshCopy = new PeerProperties(this.mName, this.mBluetoothMacAddress, this.mServiceType, this.mDeviceAddress, this.mDeviceName);
+        freshCopy.discoveryMethodMostRecent = this.discoveryMethodMostRecent;
+        // freshCopy.mBluetoothMacAddress = this.mBluetoothMacAddress;
+        // freshCopy.mDeviceAddress = this.mDeviceAddress;
+        // freshCopy.mDeviceName = this.mDeviceName;
+        // freshCopy.mName = this.mName;
+        // freshCopy.mServiceType = this.mServiceType;
+        return freshCopy;
+    }
 }

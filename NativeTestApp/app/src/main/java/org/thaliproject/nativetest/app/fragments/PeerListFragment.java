@@ -21,6 +21,11 @@ import org.thaliproject.nativetest.app.R;
 import org.thaliproject.nativetest.app.utils.MenuUtils;
 import org.thaliproject.p2p.btconnectorlib.PeerProperties;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+
 /**
  * A fragment containing the list of discovered peers.
  */
@@ -41,7 +46,7 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
     private Drawable mOutgoingConnectionIconConnected = null;
     private Drawable mOutgoingConnectionIconDataFlowing = null;
     private ListView mListView = null;
-    private ListAdapter mListAdapter = null;
+    private PeersListAdapter mPeerListAdapter = null;
     private PeerAndConnectionModel mModel = null;
     private Listener mListener = null;
     private PeerProperties mSelectedPeerProperties = null;
@@ -145,10 +150,10 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
         peersTopInfo0 = (TextView) view.findViewById(R.id.peersTopInfo0);
         peersTopInfo1 = (TextView) view.findViewById(R.id.peersTopInfo1);
 
-        mListAdapter = new ListAdapter(mContext);
+        mPeerListAdapter = new PeersListAdapter(mContext);
 
         mListView = (ListView)view.findViewById(R.id.listView);
-        mListView.setAdapter(mListAdapter);
+        mListView.setAdapter(mPeerListAdapter);
         mListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         registerForContextMenu(mListView);
         setListener(mListener);
@@ -229,7 +234,9 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
         mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                mListAdapter.notifyDataSetChanged();
+                mPeerListAdapter.setFreshData(mModel.getPeers());
+
+                mPeerListAdapter.notifyDataSetChanged();
 
                 showTopMessagInfo();
             }
@@ -238,7 +245,7 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
 
     private void showTopMessagInfo()
     {
-        if (mListAdapter.getCount() < 1)
+        if (mPeerListAdapter.getCount() < 1)
         {
             peersTopInfoLayout.setVisibility(View.VISIBLE);
             peersTopInfo0.setText("No peers have been discovered, searching in background. The LOG tab should reveal status of serach activity.");
@@ -262,39 +269,59 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
             peerRemovedWasSelected = false;
         }
 
-        Handler handler = new Handler(mContext.getMainLooper());
+        // DISABLED until we track down crash!
+        if (1==2) {
+            mainThreadHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (peerRemovedWasSelected) {
+                        mListener.onPeerSelected(null);
+                    }
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (peerRemovedWasSelected) {
-                    mListener.onPeerSelected(null);
+                    mPeerListAdapter.notifyDataSetChanged();
                 }
-
-                mListAdapter.notifyDataSetChanged();
-            }
-        });
+            });
+        }
     }
 
 
-    class ListAdapter extends BaseAdapter {
+    class PeersListAdapter extends BaseAdapter {
         private LayoutInflater mInflater = null;
         private Context mContext;
 
-        public ListAdapter(Context context) {
+        public PeersListAdapter(Context context) {
             mContext = context;
-            mInflater = (LayoutInflater) mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        private ArrayList<PeerProperties> dedicatedCopyOfPeers = new ArrayList<PeerProperties>();
+
+        public void setFreshData(ArrayList<PeerProperties> freshDataPeerList)
+        {
+            // This is still a shallow copy, but at least it doesn't allow add and remove of items in unexpected places
+            // dedicatedCopyOfPeers.clear();
+
+            // dedicatedCopyOfPeers.addAll(freshDataPeerList);
+
+            Collection<PeerProperties> deepCopy = new HashSet<PeerProperties>(freshDataPeerList.size());
+
+            Iterator<PeerProperties> iterator = freshDataPeerList.iterator();
+            while(iterator.hasNext()){
+                deepCopy.add(iterator.next().freshCopy());
+            }
+
+            dedicatedCopyOfPeers.clear();
+            dedicatedCopyOfPeers.addAll(deepCopy);
         }
 
         @Override
         public int getCount() {
-            return mModel.getPeers().size();
+            return dedicatedCopyOfPeers.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return mModel.getPeers().get(position);
+            return dedicatedCopyOfPeers.get(position);
         }
 
         @Override
@@ -310,7 +337,7 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
                 view = mInflater.inflate(R.layout.list_item_peer, null);
             }
 
-            PeerProperties peerProperties = mModel.getPeers().get(position);
+            PeerProperties peerProperties = dedicatedCopyOfPeers.get(position);
 
             TextView textView = (TextView) view.findViewById(R.id.peerName);
             textView.setText(peerProperties.getName());

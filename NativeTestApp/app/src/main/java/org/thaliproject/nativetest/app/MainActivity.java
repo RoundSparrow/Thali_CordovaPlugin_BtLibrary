@@ -244,6 +244,9 @@ public class MainActivity
                 }
                 preferences.edit().putBoolean(PREF_KEY_SCREEN_ON, item.isChecked()).commit();
                 break;
+            case R.id.action_refresh:
+                mPeerListFragment.onDataChanged();
+                break;
         }
 
         return wasConsumed || super.onOptionsItemSelected(item);
