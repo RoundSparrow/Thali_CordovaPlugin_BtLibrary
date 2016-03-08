@@ -15,6 +15,7 @@ public class PeerProperties {
     public static final int DISCOVERY_VIA_BLUETOOTH = 2;
     public static final int DISCOVERY_VIA_BLUETOOTH_LE = 3;
     public static final int DISCOVERY_VIA_WIFI_PEERLIST = 4;
+    public static final int DISCOVERY_VIA_BLUETOOTH_INCOMING_HANDSHAKE = 5;
 
     private int discoveryMethodMostRecent = DISCOVERY_VIA_UNKNOWN;
     private String mName; // The peer name
@@ -22,6 +23,7 @@ public class PeerProperties {
     private String mServiceType;
     private String mDeviceName;
     private String mDeviceAddress;
+    private int timesCopiedMerged = 0;
 
     /**
      * Constructor.
@@ -77,10 +79,12 @@ public class PeerProperties {
      * @return The identifier of this peer, which is its Bluetooth MAC address.
      */
     public String getId() {
+        /*
         if (mBluetoothMacAddress == null)
         {
             return mDeviceAddress;
         }
+        */
         return mBluetoothMacAddress;
     }
 
@@ -131,10 +135,15 @@ public class PeerProperties {
     public void copyFrom(PeerProperties sourcePeerProperties) {
         if (sourcePeerProperties != null) {
             mName = sourcePeerProperties.mName;
-            mBluetoothMacAddress = sourcePeerProperties.mBluetoothMacAddress;
-            mServiceType = sourcePeerProperties.mServiceType;
+            if (sourcePeerProperties.mBluetoothMacAddress != null) {
+                mBluetoothMacAddress = sourcePeerProperties.mBluetoothMacAddress;
+            }
+            if (sourcePeerProperties.mServiceType != null) {
+                mServiceType = sourcePeerProperties.mServiceType;
+            }
             mDeviceName = sourcePeerProperties.mDeviceName;
             mDeviceAddress = sourcePeerProperties.mDeviceAddress;
+            timesCopiedMerged++;
         }
     }
 
@@ -227,7 +236,7 @@ public class PeerProperties {
 
     @Override
     public String toString() {
-        return "[" + mName + " " + mBluetoothMacAddress + " " + discoveryMethodMostRecent + "]";
+        return "[" + mName + " " + mBluetoothMacAddress + " " + discoveryMethodMostRecent + " c" + timesCopiedMerged + "]";
     }
 
     /**

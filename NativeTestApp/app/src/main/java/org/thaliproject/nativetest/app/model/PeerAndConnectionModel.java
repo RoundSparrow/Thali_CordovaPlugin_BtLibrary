@@ -83,23 +83,41 @@ public class PeerAndConnectionModel {
         final String newPeerId = peerProperties.getId();
         int index = 0;
 
-        for (PeerProperties existingPeerProperties : mPeers) {
-            if (existingPeerProperties.getId().equals(newPeerId)) {
-                // Update the peer
-                try {
-                    mPeers.get(index).copyFrom(peerProperties);
-                    wasUpdated = true;
-                } catch (Exception e) {
-                    Log.e(TAG, "addOrUpdatePeer: Failed to update the peer name of peer "
-                            + peerProperties + ": " + e.getMessage(), e);
+        //if (newPeerId != null) {
+            for (PeerProperties existingPeerProperties : mPeers) {
+                boolean doUpdate = false;
+                // This code assumes that the getId() is Bluetooth, code will need rework if that assumption changes
+                if (existingPeerProperties.getId() == null)
+                {
+                    if (existingPeerProperties.getDeviceAddress().equals(peerProperties.getDeviceAddress())) {
+                        doUpdate = true;
+                    }
+                }
+                else {
+                    if (newPeerId != null) {
+                        if (existingPeerProperties.getId().equals(newPeerId)) {
+                            doUpdate = true;
+                        }
+                    }
                 }
 
-                alreadyInTheList = true;
-                break;
-            }
+                if (doUpdate) {
+                    // Update the peer
+                    try {
+                        mPeers.get(index).copyFrom(peerProperties);
+                        wasUpdated = true;
+                    } catch (Exception e) {
+                        Log.e(TAG, "addOrUpdatePeer: Failed to update the peer name of peer "
+                                + peerProperties + ": " + e.getMessage(), e);
+                    }
 
-            index++;
-        }
+                    alreadyInTheList = true;
+                    break;
+                }
+
+                index++;
+            }
+        //}
 
         if (alreadyInTheList) {
             if (wasUpdated) {

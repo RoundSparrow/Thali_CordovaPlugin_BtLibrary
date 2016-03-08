@@ -119,6 +119,7 @@ public class BluetoothUtils {
             byte[] handshakeMessage, BluetoothSocket bluetoothSocketOfSender) {
         String identityString = new String(handshakeMessage);
         PeerProperties peerProperties = new PeerProperties();
+        peerProperties.setDiscoveryMethod(PeerProperties.DISCOVERY_VIA_BLUETOOTH_INCOMING_HANDSHAKE);
         boolean receivedHandshakeMessageValidated = false;
 
         if (!identityString.isEmpty()) {

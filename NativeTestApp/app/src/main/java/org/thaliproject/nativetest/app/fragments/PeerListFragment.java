@@ -379,6 +379,9 @@ public class PeerListFragment extends Fragment implements PeerAndConnectionModel
                 case PeerProperties.DISCOVERY_VIA_WIFI_PEERLIST:
                     textView.setText("vis WiFi PL");
                     break;
+                case PeerProperties.DISCOVERY_VIA_BLUETOOTH_INCOMING_HANDSHAKE:
+                    textView.setText("via Bluetooth IH");
+                    break;
                 case PeerProperties.DISCOVERY_VIA_UNKNOWN:
                     textView.setText("");
                     break;

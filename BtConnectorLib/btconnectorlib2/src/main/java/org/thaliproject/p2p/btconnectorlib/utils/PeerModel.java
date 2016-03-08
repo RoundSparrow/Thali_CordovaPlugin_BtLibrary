@@ -146,6 +146,7 @@ public class PeerModel {
     }
 
     /**
+     * ToDO: is this pulling a peer out of the list that the ListView is using? causing our ListView Activity crash?
      * Removes the given peer properties from the collection.
      * @param peerPropertiesToRemove The peer properties to remove.
      * @return The found and removed peer properties or null, if not found.

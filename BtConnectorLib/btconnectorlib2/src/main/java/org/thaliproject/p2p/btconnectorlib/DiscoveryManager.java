@@ -25,6 +25,7 @@ import org.thaliproject.p2p.btconnectorlib.utils.PeerModel;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -705,19 +706,22 @@ public class DiscoveryManager
                             + wifiP2pDevice.deviceName + " " + wifiP2pDevice.deviceAddress);
 
                     // ToDO: are we mixing up Bluetooth MAC Addresses with WiFi MAC Addresses?
-                    PeerProperties peerProperties = mPeerModel.getDiscoveredPeerByDeviceAddress(wifiP2pDevice.deviceAddress);
+                    PeerProperties peerProperties = mPeerModel.getDiscoveredPeerByDeviceAddress(wifiP2pDevice.deviceAddress.toUpperCase(Locale.US));
 
                     if (peerProperties != null) {
                         mPeerModel.addOrUpdateDiscoveredPeer(peerProperties);
                     }
                     else
                     {
-                        peerProperties = new PeerProperties();
-                        peerProperties.setName(wifiP2pDevice.deviceName);
-                        peerProperties.setDeviceAddress(wifiP2pDevice.deviceAddress);
-                        peerProperties.setDiscoveryMethod(PeerProperties.DISCOVERY_VIA_WIFI_PEERLIST);
+                        if (1==1) {
+                            peerProperties = new PeerProperties();
+                            peerProperties.setName(wifiP2pDevice.deviceName);
+                            peerProperties.setDeviceAddress(wifiP2pDevice.deviceAddress.toUpperCase(Locale.US));
+                            // peerProperties.setServiceType(wifiP2pDevice.);
+                            peerProperties.setDiscoveryMethod(PeerProperties.DISCOVERY_VIA_WIFI_PEERLIST);
 
-                        mPeerModel.addOrUpdateDiscoveredPeer(peerProperties);
+                            mPeerModel.addOrUpdateDiscoveredPeer(peerProperties);
+                        }
 
                         Log.d(TAG,  "onP2pDeviceListChanged PREVIOUSLY_UNKNOWN Peer " + (index + 1) + ": "
                                 + wifiP2pDevice.toString());
