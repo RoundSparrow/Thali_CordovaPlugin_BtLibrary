@@ -161,6 +161,7 @@ class WifiServiceWatcher {
 
             if (serviceType.startsWith(mServiceType)) {
                 PeerProperties peerProperties = new PeerProperties();
+                peerProperties.setDiscoveryMethod(PeerProperties.DISCOVERY_VIA_WIFI);
                 boolean resolvedPropertiesOk = false;
 
                 try {
@@ -177,8 +178,6 @@ class WifiServiceWatcher {
                     peerProperties.setDeviceName(p2pDevice.deviceName);
                     peerProperties.setDeviceAddress(p2pDevice.deviceAddress);
                 }
-
-                peerProperties.setDiscoveryMethod(PeerProperties.DISCOVERY_VIA_WIFI);
 
                 mListener.onServiceDiscovered(peerProperties);
             } else {

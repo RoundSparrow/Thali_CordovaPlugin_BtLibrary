@@ -227,8 +227,20 @@ public class PeerProperties {
         PeerProperties other = (PeerProperties)otherPeerProperties;
         boolean isMatch = false;
 
-        if (other != null && other.getBluetoothMacAddress() != null && mBluetoothMacAddress != null) {
-            isMatch = other.getBluetoothMacAddress().equals(mBluetoothMacAddress);
+        //if (other != null && other.getBluetoothMacAddress() != null && mBluetoothMacAddress != null) {
+        //    isMatch = other.getBluetoothMacAddress().equals(mBluetoothMacAddress);
+        // }
+        if (other != null) {
+            if (other.getBluetoothMacAddress() != null && mBluetoothMacAddress != null) {
+                isMatch = other.getBluetoothMacAddress().equals(mBluetoothMacAddress);
+            }
+            else
+            {
+                // Likely branch for DISCOVERY_VIA_WIFI_PEERLIST sourced entries
+                if (other.getDeviceAddress() != null && mDeviceAddress != null) {
+                    isMatch = other.getDeviceAddress().equals(mDeviceAddress);
+                }
+            }
         }
 
         return isMatch;
@@ -236,7 +248,7 @@ public class PeerProperties {
 
     @Override
     public String toString() {
-        return "[" + mName + " " + mBluetoothMacAddress + " " + discoveryMethodMostRecent + " c" + timesCopiedMerged + "]";
+        return "[" + mName + " BT:" + mBluetoothMacAddress + " D:" + mDeviceAddress + " ?" + discoveryMethodMostRecent + " c" + timesCopiedMerged + "]";
     }
 
     /**

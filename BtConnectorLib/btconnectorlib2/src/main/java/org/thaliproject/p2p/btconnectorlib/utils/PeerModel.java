@@ -182,23 +182,30 @@ public class PeerModel {
     public void addOrUpdateDiscoveredPeer(PeerProperties peerPropertiesToAddOrUpdate) {
         Log.d(TAG, "addOrUpdateDiscoveredPeer SPOT_AA000 " + peerPropertiesToAddOrUpdate.toString());
 
+        String traceRunA = "";
         synchronized (this) {
             if (peerPropertiesToAddOrUpdate != null) {
                 //Log.v(TAG, "addOrUpdateDiscoveredPeer: " + peerProperties.toString());
+// ToDo: is this removing from the Activity List? Notification of data chaange?
                 PeerProperties oldPeerProperties = removePeer(peerPropertiesToAddOrUpdate);
 
                 if (oldPeerProperties != null) {
+                    traceRunA += "A";
                     // This one was already in the list
                     // Make sure we don't lose any data when updating
-                    PeerProperties.copyMissingValuesFromOldPeer(oldPeerProperties, peerPropertiesToAddOrUpdate);
+                    boolean peerRevised = PeerProperties.copyMissingValuesFromOldPeer(oldPeerProperties, peerPropertiesToAddOrUpdate);
+                    if (peerRevised)
+                        traceRunA += "B";
 
                     if (peerPropertiesToAddOrUpdate.hasMoreInformation(oldPeerProperties)) {
+                        traceRunA += "C";
                         // The new discovery result has more information than the old one
                         for (Listener listener : mListeners) {
                             listener.onPeerUpdated(peerPropertiesToAddOrUpdate);
                         }
                     }
                 } else {
+                    traceRunA += "D";
                     // The given peer was not in the list before, hence it is a new one
                     for (Listener listener : mListeners) {
                         listener.onPeerAdded(peerPropertiesToAddOrUpdate);
@@ -211,7 +218,9 @@ public class PeerModel {
                         + ((oldPeerProperties == null)
                             ? ("New peer, " + peerPropertiesToAddOrUpdate.toString() + ", added")
                             : ("Timestamp of peer " + peerPropertiesToAddOrUpdate.toString() + " updated"))
-                        + " - the peer count is " + mDiscoveredPeers.size());
+                        + " - the peer count is " + mDiscoveredPeers.size()
+                        + " trace: " + traceRunA
+                        );
 
                 if (mCheckExpiredPeersTimer == null) {
                     createCheckPeerExpirationTimer();
